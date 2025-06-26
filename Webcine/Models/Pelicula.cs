@@ -1,0 +1,83 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace WebCine.Models
+{
+    public class Pelicula
+    {
+        private int _id;
+        private string _titulo;
+        private string _genero;
+        private int _duracion;
+        private string _clasificacion;
+        private string _sinopsis;
+        private string _idioma;
+        private DateTime _fechaEstreno;
+
+        public Pelicula()
+        {
+        }
+        public Pelicula(int id, string titulo, string genero, int duracion, string clasificacion, string sinopsis, string idioma, DateTime fechaEstreno)
+        {
+            Id = id;
+            Titulo = titulo;
+            Genero = genero;
+            Duracion = duracion;
+            Clasificacion = clasificacion;
+            Sinopsis = sinopsis;
+            Idioma = idioma;
+            FechaEstreno = fechaEstreno;
+        }
+
+        public int Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
+
+        public string Titulo
+        {
+            get { return _titulo; }
+            set { _titulo = value; }
+        }
+        public string Genero
+        {
+            get { return _genero; }
+            set { _genero = value; }
+        }
+        public int Duracion
+        {
+            get { return _duracion; }
+            set { _duracion = value; }
+        }
+        public string Clasificacion
+        {
+            get { return _clasificacion; }
+            set { _clasificacion = value; }
+        }
+        public string Sinopsis
+        {
+            get { return _sinopsis; }
+            set { _sinopsis = value; }
+        }
+        public string Idioma
+        {
+            get { return _idioma; }
+            set { _idioma = value; }
+        }
+        public DateTime FechaEstreno
+        {
+            get { return _fechaEstreno; }
+            set { _fechaEstreno = value; }
+        }
+
+        public override string ToString()
+        {
+            return $"Película ID: {Id}, Título: {Titulo}, Duración: {Duracion} min";
+        }
+    }
+
+}
