@@ -6,9 +6,15 @@ using System.Data.Entity;
 
 namespace WebCine.Models
 {
+    /// <summary>
+    /// Contexto de base de datos para la aplicación WebCine.
+    /// Gestiona las entidades y la configuración de Entity Framework.
+    /// </summary>
     public class MiDbContext : DbContext
     {
-        // Constructor para .NET Framework con SQL Express
+        /// <summary>
+        /// Constructor que inicializa el contexto con la cadena de conexión especificada.
+        /// </summary>
         public MiDbContext() : base("name=MyDbConnectionString")
         {
             // Opcional: Configuración adicional
@@ -31,10 +37,30 @@ namespace WebCine.Models
         public DbSet<MetodoPago> MetodosPago { get; set; }
         public DbSet<Departamento> Departamento { get; set; }
 
+        /// <summary>
+        /// Configura el modelo de entidades y sus relaciones.
+        /// </summary>
+        /// <param name="modelBuilder">Constructor de modelos de Entity Framework.</param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            // Configuraciones adicionales del modelo
+            modelBuilder.Entity<Pelicula>().ToTable("Pelicula");
+            modelBuilder.Entity<Funcion>().ToTable("Funcion");
+            modelBuilder.Entity<Cartelera>().ToTable("Cartelera");
+            modelBuilder.Entity<Sala>().ToTable("Sala");
+            modelBuilder.Entity<Reserva>().ToTable("Reserva");
+            modelBuilder.Entity<Boleto>().ToTable("Boleto");
+            modelBuilder.Entity<Cliente>().ToTable("Cliente");
+            modelBuilder.Entity<Asiento>().ToTable("Asiento");
+            modelBuilder.Entity<Empleado>().ToTable("Empleado");
+            modelBuilder.Entity<DetalleFactura>().ToTable("DetalleFactura");
+            modelBuilder.Entity<Factura>().ToTable("Factura");
+            modelBuilder.Entity<Persona>().ToTable("Persona");
+            modelBuilder.Entity<Nomina>().ToTable("Nomina");
+            modelBuilder.Entity<MetodoPago>().ToTable("MetodoPago");
+            modelBuilder.Entity<Departamento>().ToTable("Departamento");
+
             base.OnModelCreating(modelBuilder);
         }
     }
 }
+
