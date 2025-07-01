@@ -8,6 +8,7 @@ namespace WebCine.Models
 {
     public class Asiento
     {
+        //dfff
         private int _id;
         private string _fila;
         private int _columna;
