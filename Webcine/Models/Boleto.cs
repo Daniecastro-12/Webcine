@@ -28,7 +28,6 @@ namespace WebCine.Models
             CodigoQR = codigoQR;
         }
 
-
         public int Id
         {
             get { return _id; }
@@ -59,8 +58,6 @@ namespace WebCine.Models
             get { return _codigoQR; }
             set { _codigoQR = value; }
         }
-
-
         public override string ToString()
         {
             return $"Boleto ID: {Id}, Asiento: {_asiento}, Precio: {_precio:C}";
