@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,6 +16,88 @@ namespace Webcine.Controllers
     public class PeliculasController : ApiController
     {
         private MiDbContext db = new MiDbContext();
+
+
+
+
+        //TODASD LAS PELICULAS CON NUMEROS DE FUNCIONES PROGRAMADA
+        [HttpGet]
+        [Route("api/peliculas/con-funciones")]
+        [SwaggerOperation("GetPeliculasConCantidadFunciones")]
+        public IHttpActionResult GetPeliculasConCantidadFunciones()
+        {
+            var peliculas = db.Peliculas
+                              .Select(p => new
+                              {
+                                  PeliculaId = p.Id,
+                                  Titulo = p.Titulo,
+                                  Genero = p.Genero,
+                                  Clasificacion = p.Clasificacion,
+                                  FuncionesProgramadas = p.Funciones.Count
+                              })
+                              .ToList();
+
+            return Ok(peliculas);
+        }
+
+
+
+        //PELICULAS FILTRADAS POR EL IDIOPMA Y CLASIFICACION
+        [HttpGet]
+        [Route("api/peliculas/filtro")]
+        [SwaggerOperation("GetPeliculasPorIdiomaClasificacion")]
+        public IHttpActionResult GetPeliculasPorIdiomaClasificacion(string idioma, string clasificacion)
+        {
+            var peliculas = db.Peliculas
+                              .Where(p => p.Idioma == idioma && p.Clasificacion == clasificacion)
+                              .Select(p => new
+                              {
+                                  PeliculaId = p.Id,
+                                  Titulo = p.Titulo,
+                                  Duracion = p.Duracion,
+                                  FechaEstreno = p.FechaEstreno
+                              })
+                              .ToList();
+
+            return Ok(peliculas);
+        }
+
+
+
+
+
+        //PELICULAS CON FUNCIONES PROXIMAS
+        [HttpGet]
+        [Route("api/peliculas/proximas-funciones")]
+        [SwaggerOperation("GetPeliculasConFuncionesProximas")]
+        public IHttpActionResult GetPeliculasConFuncionesProximas(DateTime desde)
+        {
+            var peliculas = db.Peliculas
+                              .Where(p => p.Funciones.Any(f => f.FechaHora >= desde))
+                              .Select(p => new
+                              {
+                                  PeliculaId = p.Id,
+                                  Titulo = p.Titulo,
+                                  Genero = p.Genero,
+
+                                  Funciones = p.Funciones
+                                               .Where(f => f.FechaHora >= desde)
+                                               .Select(f => new
+                                               {
+                                                   FechaHora = f.FechaHora,
+                                                   SalaId = f._salaId,
+                                                   PrecioEntrada = f.PrecioEntrada
+                                               }).ToList()
+                              })
+                              .ToList();
+
+            return Ok(peliculas);
+        }
+
+
+
+
+
 
         // GET: api/Peliculas
         public IQueryable<Pelicula> GetPeliculas()

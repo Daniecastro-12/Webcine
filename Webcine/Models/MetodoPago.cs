@@ -8,9 +8,9 @@ namespace WebCine.Models
 {
     public class MetodoPago
     {
-        private int _id;
-        private string _nombre;
-        private string _descripcion;
+        public int _id;
+        public string _nombre;
+        public string _descripcion;
 
         public int Id
         {

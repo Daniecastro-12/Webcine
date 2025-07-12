@@ -10,11 +10,14 @@ namespace WebCine.Models
     
     public class Sala
     {
-        private int _id;
-        private string _nombre;
-        private int _capacidad;
-        private string _tipo;
-        private string _ubicacion;
+        public int _id;
+        public string _nombre;
+        public int _capacidad;
+        public string _tipo;
+        public string _ubicacion;
+
+        public List<Funcion> Funciones { get; set; }
+        public virtual ICollection<Asiento> Asientos { get; set; }
 
         public Sala()
         {

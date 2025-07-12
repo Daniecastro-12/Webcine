@@ -8,10 +8,10 @@ namespace WebCine.Models
 {
     public class Departamento
     {
-        private int _id;
-        private string _nombre;
-        private string _descripcion;
-        private List<Empleado> _listaEmpleados = new List<Empleado>();
+        public int _id;
+        public string _nombre;
+        public string _descripcion;
+        public List<Empleado> _listaEmpleados = new List<Empleado>();
 
         public Departamento()
         {

@@ -9,11 +9,16 @@ namespace WebCine.Models
     public class Nomina
     {
         private int _id;
-        private Empleado _empleado;
-        private DateTime _fechaPago;
-        private decimal _monto;
-        private int _horasTrabajadas;
-        private string _periodo;
+
+
+        public int _empleadoId { get; set; }
+        public Empleado _empleado;
+
+
+        public DateTime _fechaPago;
+        public decimal _monto;
+        public int _horasTrabajadas;
+        public string _periodo;
 
         public Nomina()
         {

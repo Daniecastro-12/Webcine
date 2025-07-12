@@ -8,18 +8,32 @@ namespace WebCine.Models
 {
     public class Boleto
     {
-        private int _id;
-        private Reserva _reserva;
-        private Funcion _funcion;
-        private Asiento _asiento;
-        private decimal _precio;
-        private string _codigoQR;
+        public int _id;
+
+        public int _reservaId { get; set; } 
+        public Reserva _reserva;
+
+        public int _funcionId { get; set; }
+        public Funcion _funcion;
+
+        public int _asientoId { get; set; }
+        public Asiento _asiento;
+
+
+        public decimal _precio;
+        public string _codigoQR;
+
+
 
         public Boleto()
         {
         }
-        public Boleto(int id, Reserva reserva, Funcion funcion, Asiento asiento, decimal precio, string codigoQR)
+
+        public Boleto(int reservaId, int funcionId, int asientoId, int id, Reserva reserva, Funcion funcion, Asiento asiento, decimal precio, string codigoQR)
         {
+            _reservaId = reservaId;
+            _funcionId = funcionId;
+            _asientoId = asientoId;
             Id = id;
             Reserva = reserva;
             Funcion = funcion;

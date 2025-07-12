@@ -8,12 +8,24 @@ namespace WebCine.Models
 {
     public class Factura
     {
-        private int _id;
-        private Cliente _cliente;
-        private DateTime _fecha;
-        private List<DetalleFactura> _listaDetalles = new List<DetalleFactura>();
-        private decimal _total;
-        private MetodoPago _metodoPago;
+        public int _id;
+
+        public int _clienteId { get; set; }
+        public Cliente _cliente;
+
+
+        public DateTime _fecha;
+
+
+
+        public List<DetalleFactura> _listaDetalles = new List<DetalleFactura>();
+
+
+        public decimal _total;
+
+        public int _metodoPagoId { get; set; }
+        public MetodoPago _metodoPago;
+
 
         public Factura()
         {

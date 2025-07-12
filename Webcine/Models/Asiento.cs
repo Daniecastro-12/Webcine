@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,10 +10,14 @@ namespace WebCine.Models
     public class Asiento
     {
         //dfff
-        private int _id;
-        private string _fila;
-        private int _columna;
-        private bool _disponible;
+        public int _id;
+        public string _fila;
+        public int _columna;
+        public bool _disponible;
+
+
+        public int SalaId { get; set; }     
+        public virtual Sala Sala { get; set; }
 
         public Asiento()
         {

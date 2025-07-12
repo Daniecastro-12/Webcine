@@ -9,11 +9,20 @@ namespace WebCine.Models
     public class Reserva
     {
         private int _id;
-        private Cliente _cliente;
-        private Funcion _funcion;
-        private int _cantidadBoletos;
-        private List<Asiento> _listaAsientos = new List<Asiento>();
-        private bool _estadoPago;
+
+        public int _clienteId { get; set; }
+        public Cliente _cliente;
+
+        public int _funcionId { get; set; }
+        public Funcion _funcion;
+
+
+
+
+        public int _cantidadBoletos;
+        public List<Asiento> _listaAsientos = new List<Asiento>();
+        public bool _estadoPago;
+
 
         public Reserva()
         {

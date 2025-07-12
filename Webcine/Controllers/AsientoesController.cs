@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,6 +16,43 @@ namespace Webcine.Controllers
     public class AsientoesController : ApiController
     {
         private MiDbContext db = new MiDbContext();
+
+
+
+        [HttpGet]
+        [Route("api/asientos/disponibles")]
+        [SwaggerOperation("GetAsientosPorDisponibilidad")]
+        public IHttpActionResult GetAsientosPorDisponibilidad(bool disponible = true)
+        {
+            var asientos = db.Asientos
+                             .Include("Sala")
+                             .Where(a => a.Disponible == disponible)
+                             .Select(a => new
+                             {
+                                 // Asiento info
+                                 AsientoId = a.Id,
+                                 Fila = a.Fila,
+                                 Columna = a.Columna,
+                                 Disponible = a.Disponible,
+
+                                 // Sala info
+                                 Sala = new
+                                 {
+                                     SalaId = a.Sala.Id,
+                                     Nombre = a.Sala.Nombre,
+                                     Capacidad = a.Sala.Capacidad,
+                                     Tipo = a.Sala.Tipo,
+                                     Ubicacion = a.Sala.Ubicacion
+                                 }
+                             })
+                             .ToList();
+
+            return Ok(asientos);
+        }
+
+
+
+
 
         // GET: api/Asientoes
         public IQueryable<Asiento> GetAsientos()

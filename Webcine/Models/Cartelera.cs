@@ -8,9 +8,9 @@ namespace WebCine.Models
 {
    public class Cartelera
     {
-        private int _id;
-        private DateTime _fecha;
-        private List<Funcion> _listaFunciones = new List<Funcion>();
+        public int _id;
+        public DateTime _fecha;
+        public List<Funcion> _listaFunciones = new List<Funcion>();
 
         public Cartelera()
         {

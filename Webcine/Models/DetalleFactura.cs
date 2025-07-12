@@ -8,11 +8,14 @@ namespace WebCine.Models
 {
     public class DetalleFactura
     {
-        private int _id;
-        private int _cantidad;
-        private string _descripcion;
-        private decimal _precioUnitario;
-        private decimal _subtotal;
+        public int _id;
+        public int _cantidad;
+        public string _descripcion;
+        public decimal _precioUnitario;
+        public decimal _subtotal;
+
+        public int _facturaId { get; set; }
+        public Factura _factura { get; set; }
 
         public DetalleFactura()
         {
