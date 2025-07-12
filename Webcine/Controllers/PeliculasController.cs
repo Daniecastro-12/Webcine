@@ -17,7 +17,7 @@ namespace Webcine.Controllers
     {
         private MiDbContext db = new MiDbContext();
 
-
+        //funciona
 
 
         //TODASD LAS PELICULAS CON NUMEROS DE FUNCIONES PROGRAMADA
@@ -40,8 +40,6 @@ namespace Webcine.Controllers
             return Ok(peliculas);
         }
 
-
-
         //PELICULAS FILTRADAS POR EL IDIOPMA Y CLASIFICACION
         [HttpGet]
         [Route("api/peliculas/filtro")]
@@ -61,9 +59,6 @@ namespace Webcine.Controllers
 
             return Ok(peliculas);
         }
-
-
-
 
 
         //PELICULAS CON FUNCIONES PROXIMAS
@@ -93,11 +88,6 @@ namespace Webcine.Controllers
 
             return Ok(peliculas);
         }
-
-
-
-
-
 
         // GET: api/Peliculas
         public IQueryable<Pelicula> GetPeliculas()
