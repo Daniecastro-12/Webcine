@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,6 +16,107 @@ namespace Webcine.Controllers
     public class FuncionsController : ApiController
     {
         private MiDbContext db = new MiDbContext();
+
+
+
+        //FUNCION POR GENERO DE PELICULA
+        [HttpGet]
+        [Route("api/funciones/por-genero")]
+        [SwaggerOperation("GetFuncionesPorGenero")]
+        public IHttpActionResult GetFuncionesPorGenero(string genero)
+        {
+            var funciones = db.Funciones
+                              .Include("Pelicula")
+                              .Include("Sala")
+                              .Where(f => f.Pelicula.Genero == genero)
+                              .Select(f => new
+                              {
+                                  FuncionId = f.Id,
+                                  FechaHora = f.FechaHora,
+                                  PrecioEntrada = f.PrecioEntrada,
+
+                                  Pelicula = new
+                                  {
+                                      Titulo = f.Pelicula.Titulo,
+                                      Genero = f.Pelicula.Genero,
+                                      Clasificacion = f.Pelicula.Clasificacion
+                                  },
+
+                                  Sala = new
+                                  {
+                                      Nombre = f.Sala.Nombre,
+                                      Tipo = f.Sala.Tipo
+                                  }
+                              })
+                              .ToList();
+
+            return Ok(funciones);
+        }
+
+
+
+        //FUNCIONES POR RANGO DE FECHAS
+        [HttpGet]
+        [Route("api/funciones/por-fecha")]
+        [SwaggerOperation("GetFuncionesPorFecha")]
+        public IHttpActionResult GetFuncionesPorFecha(DateTime desde, DateTime hasta)
+        {
+            var funciones = db.Funciones
+                              .Include("Pelicula")
+                              .Where(f => f.FechaHora >= desde && f.FechaHora <= hasta)
+                              .Select(f => new
+                              {
+                                  FuncionId = f.Id,
+                                  FechaHora = f.FechaHora,
+                                  TituloPelicula = f.Pelicula.Titulo,
+                                  Duracion = f.Pelicula.Duracion
+                              })
+                              .ToList();
+
+            return Ok(funciones);
+        }
+
+
+
+
+        //FUNCION POR TIPO DE SALA
+        [HttpGet]
+        [Route("api/funciones/por-tipo-sala")]
+        [SwaggerOperation("GetFuncionesPorTipoSala")]
+        public IHttpActionResult GetFuncionesPorTipoSala(string tipoSala)
+        {
+            var funciones = db.Funciones
+                              .Include("Sala")
+                              .Include("Pelicula")
+                              .Where(f => f.Sala.Tipo == tipoSala)
+                              .Select(f => new
+                              {
+                                  FuncionId = f.Id,
+                                  FechaHora = f.FechaHora,
+                                  AsientosDisponibles = f.AsientosDisponibles,
+
+                                  Sala = new
+                                  {
+                                      Nombre = f.Sala.Nombre,
+                                      Tipo = f.Sala.Tipo,
+                                      Capacidad = f.Sala.Capacidad
+                                  },
+
+                                  Pelicula = new
+                                  {
+                                      Titulo = f.Pelicula.Titulo
+                                  }
+                              })
+                              .ToList();
+
+            return Ok(funciones);
+        }
+
+
+
+
+
+
 
         // GET: api/Funcions
         public IQueryable<Funcion> GetFunciones()

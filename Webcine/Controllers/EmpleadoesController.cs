@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,6 +16,90 @@ namespace Webcine.Controllers
     public class EmpleadoesController : ApiController
     {
         private MiDbContext db = new MiDbContext();
+
+
+
+        [HttpGet]
+        [Route("api/empleados/info")]
+        [SwaggerOperation("GetEmpleadosConDepartamento")]
+        public IHttpActionResult GetEmpleadosConDepartamento()
+        {
+            var empleados = db.Empleados
+                              .Include("Departamento")
+                              .Select(e => new
+                              {
+                                  EmpleadoId = e.Id,
+                                  NombreCompleto = e.Nombre + " " + e.Apellido,
+                                  Puesto = e.Puesto,
+                                  Sueldo = e.Sueldo,
+                                  FechaContratacion = e.FlechaContratacion,
+
+                                  Departamento = new
+                                  {
+                                      DepartamentoId = e.departamento.Id,
+                                      Nombre = e.departamento.Nombre
+                                  }
+                              })
+                              .ToList();
+
+            return Ok(empleados);
+        }
+
+
+        //FILTRADO POR DEPARTAMENTO
+        [HttpGet]
+        [Route("api/empleados/por-departamento")]
+        [SwaggerOperation("GetEmpleadosPorDepartamento")]
+        public IHttpActionResult GetEmpleadosPorDepartamento(int departamentoId)
+        {
+            var empleados = db.Empleados
+                              .Where(e => e._departamentoId == departamentoId)
+                              .Select(e => new
+                              {
+                                  EmpleadoId = e.Id,
+                                  Nombre = e.Nombre,
+                                  Apellido = e.Apellido,
+                                  Puesto = e.Puesto
+                              })
+                              .ToList();
+
+            return Ok(empleados);
+        }
+
+
+
+
+
+        //empleaoo con su historial de pagos
+        [HttpGet]
+        [Route("api/empleados/nomina")]
+        [SwaggerOperation("GetEmpleadosConPagos")]
+        public IHttpActionResult GetEmpleadosConPagos()
+        {
+            var empleados = db.Empleados
+                              .Include("Pagos")
+                              .Select(e => new
+                              {
+                                  EmpleadoId = e.Id,
+                                  NombreCompleto = e.Nombre + " " + e.Apellido,
+                                  Puesto = e.Puesto,
+
+                                  Pagos = e._pagos.Select(p => new
+                                  {
+                                      PagoId = p.Id,
+                                      Monto = p.Monto,
+                                      FechaPago = p.FechaPago
+                                  }).ToList()
+                              })
+                              .ToList();
+
+            return Ok(empleados);
+        }
+
+
+
+
+
 
         // GET: api/Empleadoes
         public IQueryable<Empleado> GetEmpleados()

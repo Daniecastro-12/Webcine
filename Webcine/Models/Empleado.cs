@@ -8,11 +8,16 @@ namespace WebCine.Models
 {
     public class Empleado : Persona
     {
-        private int _id;
-        private string _puesto;
-        private decimal _sueldo;
-        private DateTime _fechaContratacion;
-        private Departamento _departamento;
+        public int _id;
+        public string _puesto;
+        public decimal _sueldo;
+        public DateTime _fechaContratacion;
+
+
+        public int _departamentoId { get; set; }
+        public Departamento _departamento;
+
+        public List<Nomina> _pagos { get; set; }
 
         public Empleado()
         {

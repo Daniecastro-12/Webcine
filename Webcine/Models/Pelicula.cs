@@ -8,14 +8,16 @@ namespace WebCine.Models
 {
     public class Pelicula
     {
-        private int _id;
-        private string _titulo;
-        private string _genero;
-        private int _duracion;
-        private string _clasificacion;
-        private string _sinopsis;
-        private string _idioma;
-        private DateTime _fechaEstreno;
+        public int _id;
+        public string _titulo;
+        public string _genero;
+        public int _duracion;
+        public string _clasificacion;
+        public string _sinopsis;
+        public string _idioma;
+        public DateTime _fechaEstreno;
+
+        public List<Funcion> Funciones { get; set; }
 
         public Pelicula()
         {

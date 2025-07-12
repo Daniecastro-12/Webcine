@@ -8,12 +8,19 @@ namespace WebCine.Models
 {
     public class Funcion
     {
-        private int _id;
-        private Pelicula _pelicula;
-        private Sala _sala;
-        private DateTime _fechaHora;
-        private decimal _precioEntrada;
-        private int _asientosDisponibles;
+        public int _id;
+        public int _peliculaId { get; set; }
+        public Pelicula _pelicula;
+
+        public int _salaId { get; set; }
+        public Sala _sala;
+
+        public List<Boleto> Boletos { get; set; }
+
+        public DateTime _fechaHora;
+        public decimal _precioEntrada;
+        public int _asientosDisponibles;
+
 
         public Funcion()
         {

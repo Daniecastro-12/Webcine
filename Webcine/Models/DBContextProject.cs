@@ -17,6 +17,8 @@ namespace WebCine.Models
         /// </summary>
         public MiDbContext() : base("name=MyDbConnectionString")
         {
+            this.Configuration.LazyLoadingEnabled = false;
+
             // Opcional: Configuración adicional
             Database.SetInitializer<MiDbContext>(null); // Desactiva inicializaciones automáticas
         }
@@ -36,6 +38,9 @@ namespace WebCine.Models
         public DbSet<Nomina> Nominas { get; set; }
         public DbSet<MetodoPago> MetodosPago { get; set; }
         public DbSet<Departamento> Departamento { get; set; }
+
+        
+
 
         /// <summary>
         /// Configura el modelo de entidades y sus relaciones.

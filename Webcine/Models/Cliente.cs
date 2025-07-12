@@ -8,10 +8,13 @@ namespace WebCine.Models
 {
     public class Cliente : Persona
     {
-        private int _id;
-        private string _correo;
-        private string _telefono;
-        private List<Factura> _historialCompras = new List<Factura>();
+        public int _id;
+        public string _correo;
+        public string _telefono;
+        public List<Factura> _historialCompras = new List<Factura>();
+
+        public List<Reserva> _reservas { get; set; }
+        
 
         public Cliente()
         {
