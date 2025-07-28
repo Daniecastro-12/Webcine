@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,9 @@ namespace WebCine.Models
         public string _sinopsis;
         public string _idioma;
         public DateTime _fechaEstreno;
+        public int IdExterna { get; set; } // ID de la película en TMDB
 
+        [JsonIgnore]
         public List<Funcion> Funciones { get; set; }
 
         public Pelicula()

@@ -15,6 +15,9 @@ namespace WebCine.Models
         public int _columna;
         public bool _disponible;
 
+        public int FuncionId { get; set; }
+        [ForeignKey("FuncionId")]
+        public virtual Funcion Funcion { get; set; }
 
         public int SalaId { get; set; }     
         public virtual Sala Sala { get; set; }

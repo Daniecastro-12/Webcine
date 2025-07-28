@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data.Entity;
+using Webcine.Models;
 
 namespace WebCine.Models
 {
@@ -38,8 +39,11 @@ namespace WebCine.Models
         public DbSet<Nomina> Nominas { get; set; }
         public DbSet<MetodoPago> MetodosPago { get; set; }
         public DbSet<Departamento> Departamento { get; set; }
+        public DbSet<TipoEntrada> TipoEntradas { get; set; }
+        public DbSet<FuncionTipoEntrada> FuncionTipoEntradas { get; set; }
+        public DbSet<ReservaDetalle> ReservaDetalles { get; set; }
 
-        
+
 
 
         /// <summary>
@@ -48,6 +52,14 @@ namespace WebCine.Models
         /// <param name="modelBuilder">Constructor de modelos de Entity Framework.</param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Funcion>()
+            .HasMany(f => f.Asientos)
+            .WithRequired(a => a.Funcion)
+            .HasForeignKey(a => a.FuncionId);
+
+
+
             base.OnModelCreating(modelBuilder);
         }
     }

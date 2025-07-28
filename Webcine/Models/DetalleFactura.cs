@@ -8,58 +8,29 @@ namespace WebCine.Models
 {
     public class DetalleFactura
     {
-        public int _id;
-        public int _cantidad;
-        public string _descripcion;
-        public decimal _precioUnitario;
-        public decimal _subtotal;
-
-        public int _facturaId { get; set; }
-        public Factura _factura { get; set; }
+        public int Id { get; set; }
+        public int FacturaId { get; set; }                  // Relación con Factura
+        public string Tipo { get; set; }                    // Ejemplo: "Asiento", "Snack"
+        public string Descripcion { get; set; }             // Ejemplo: "Fila J, Asiento 11"
+        public int Cantidad { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public decimal Subtotal { get; set; }
+        public virtual Factura Factura { get; set; }
 
         public DetalleFactura()
         {
         }
 
-        public DetalleFactura(int id, int cantidad, decimal subtotal, string descripcion, decimal precioUnitario)
+        public DetalleFactura(int id, int facturaId, string tipo, string descripcion, int cantidad, decimal precioUnitario, decimal subtotal, Factura factura)
         {
             Id = id;
-            Cantidad = cantidad;
-            Subtotal = subtotal;
+            FacturaId = facturaId;
+            Tipo = tipo;
             Descripcion = descripcion;
+            Cantidad = cantidad;
             PrecioUnitario = precioUnitario;
-        }
-
-        public int Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-        public int Cantidad
-        {
-            get { return _cantidad; }
-            set { _cantidad = value; }
-        }
-
-        public decimal Subtotal
-        {
-            get { return _subtotal; }
-            set { _subtotal = value; }
-        }
-        public string Descripcion
-        {
-            get { return _descripcion; }
-            set { _descripcion = value; }
-        }
-        public decimal PrecioUnitario
-        {
-            get { return _precioUnitario; }
-            set { _precioUnitario = value; }
-        }
-
-        public override string ToString()
-        {
-            return $"IdDetalle: {Id}, Detalle: {_descripcion}, Cantidad: {Cantidad}, Subtotal: {Subtotal:C}";
+            Subtotal = subtotal;
+            Factura = factura;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Webcine.Controllers
         {
             var asientos = db.Asientos
                              .Include("Sala")
-                             .Where(a => a.Disponible == disponible)
+                             .Where(a => a._disponible == disponible)
                              .Select(a => new
                              {
                                  // Asiento info
@@ -49,6 +49,68 @@ namespace Webcine.Controllers
 
             return Ok(asientos);
         }
+
+
+
+
+
+        /*[HttpGet]
+        [Route("api/asientos/por-funcion")]
+        [SwaggerOperation("GetAsientosPorFuncion")]
+        public IHttpActionResult GetAsientosPorFuncion(int funcionId)
+        {
+            var asientos = db.Asientos
+                             .Where(a => a.FuncionId == funcionId)
+                             .Select(a => new
+                             {
+                                 AsientoId = a.Id,
+                                 Fila = a.Fila,
+                                 Columna = a.Columna,
+                                 Disponible = a.Disponible
+                             })
+                             .ToList();
+
+            return Ok(asientos);
+        }*/
+
+
+        //
+        [HttpGet]
+        [Route("api/asientos/por-funcion")]
+        public IHttpActionResult GetAsientosPorFuncion(int funcionId)
+        {
+            // Busca la función con la sala
+            var funcion = db.Funciones
+                .Include(f => f.Sala)
+                .FirstOrDefault(f => f.Id == funcionId);
+
+            if (funcion == null)
+                return NotFound();
+
+            // 1. Traer IDs de asientos reservados para esa función
+            var asientosReservados = db.Reservas
+                .Where(r => r.FuncionId == funcionId)
+                .SelectMany(r => r.Asientos.Select(a => a.Id))
+                .ToList();
+
+            // 2. Traer TODOS los asientos de la sala y marcar si están reservados
+            var asientos = db.Asientos
+                .Where(a => a.SalaId == funcion._salaId)
+                .Select(a => new {
+                    a.Id,
+                    a.Fila,
+                    a.Columna,
+                    Disponible = !asientosReservados.Contains(a.Id)
+                })
+                .ToList();
+
+            return Ok(asientos);
+        }
+
+
+
+
+
 
 
 

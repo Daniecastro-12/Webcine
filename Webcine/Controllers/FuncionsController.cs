@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Webcine.DTOs;
 using WebCine.Models;
 
 namespace Webcine.Controllers
@@ -113,7 +114,281 @@ namespace Webcine.Controllers
         }
 
 
+       [HttpGet]
+        [Route("api/funciones/por-pelicula")]
+        public IHttpActionResult GetFuncionesPorPelicula(int peliculaId)
+        {
+            var funciones = db.Funciones
+                .Where(f => f._peliculaId == peliculaId)
+                .Select(f => new {
+                    FuncionId = f.Id,
+                    FechaHora = f.FechaHora,
+                    PrecioEntrada = f.PrecioEntrada,
+                    AsientosDisponibles = f.AsientosDisponibles,
+                    Sala = new
+                    {
+                        Nombre = f.Sala.Nombre,
+                        Tipo = f.Sala.Tipo
+                    }
+                })
+                .ToList();
 
+            return Ok(funciones);
+        }
+
+
+        [HttpGet]
+        [Route("api/funciones/por-pelicula-externa")]
+        public IHttpActionResult GetFuncionesPorPeliculaExterna(int idExterna)
+        {
+            // Busca la película por el id externo (TMDb)
+            var pelicula = db.Peliculas.FirstOrDefault(p => p.IdExterna == idExterna);
+            if (pelicula == null)
+                return NotFound();
+
+            // Busca las funciones usando el Id local
+            var funciones = db.Funciones
+                              .Include(f => f.Sala)
+                              .Where(f => f._peliculaId == pelicula.Id)
+                              .Select(f => new {
+                                  FuncionId = f.Id,
+                                  FechaHora = f.FechaHora,
+                                  PrecioEntrada = f.PrecioEntrada,
+                                  AsientosDisponibles = f.AsientosDisponibles,
+                                  Sala = new
+                                  {
+                                      Nombre = f.Sala.Nombre,
+                                      Tipo = f.Sala.Tipo
+                                  }
+                              })
+                              .ToList();
+
+            return Ok(funciones);
+        }
+
+
+
+
+
+        [HttpPost]
+        [Route("api/funciones/ocupar-asientos")]
+        public IHttpActionResult OcuparAsientos([FromBody] OcuparAsientosRequest req)
+        {
+            if (req == null || req.IdsAsientos == null || !req.IdsAsientos.Any())
+            {
+                System.Diagnostics.Debug.WriteLine("No se recibieron IDs de asientos para ocupar.");
+                return BadRequest("No se recibieron IDs de asientos.");
+            }
+
+            foreach (var id in req.IdsAsientos)
+            {
+                var asiento = db.Asientos.Find(id);
+                if (asiento != null)
+                {
+                    if (asiento.Disponible)
+                    {
+                        asiento.Disponible = false;
+                        System.Diagnostics.Debug.WriteLine($"Asiento {asiento.Id} marcado como ocupado.");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Asiento {asiento.Id} ya estaba ocupado.");
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"No se encontró el asiento con Id {id}.");
+                }
+            }
+
+            db.SaveChanges();
+            return Ok();
+        }
+
+        public class OcuparAsientosRequest
+        {
+            public List<int> IdsAsientos { get; set; }
+        }
+
+
+
+
+
+
+        [HttpGet]
+        [Route("api/funciones/{id}/asientos")]
+        public IHttpActionResult GetAsientosPorFuncion(int id)
+        {
+            var funcion = db.Funciones
+                .Include(f => f.Asientos)
+                .FirstOrDefault(f => f.Id == id);
+            if (funcion == null) return NotFound();
+
+            var lista = funcion.Asientos
+                .Select(a => new AsientoDTO
+                {
+                    Id = a.Id,
+                    Fila = a.Fila,
+                    Columna = a.Columna,
+                    Disponible = a.Disponible
+                })
+                .ToList();
+            return Ok(lista);
+        }
+
+
+        // POST api/funciones/{id}/asientos/generar
+        [HttpPost]
+        [Route("{id}/asientos/generar")]
+        public IHttpActionResult GenerarAsientos(int id)
+        {
+            // 1) Busca la función (incluye la sala para obtener capacidad)
+            var funcion = db.Funciones
+                           .Include(f => f.Sala)
+                           .FirstOrDefault(f => f.Id == id);
+            if (funcion == null)
+                return NotFound();
+
+            // 2) Define filas y columnas (aquí usamos A–J y
+            //    columnas según la capacidad / número de filas)
+            var filas = new[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+            int colsCount = funcion.Sala.Capacidad / filas.Length;
+            var columnas = Enumerable.Range(1, colsCount);
+
+            // 3) Crea los objetos Asiento
+            var nuevos = (from fila in filas
+                          from col in columnas
+                          select new Asiento
+                          {
+                              SalaId = funcion._salaId,
+                              FuncionId = funcion.Id,
+                              Fila = fila,
+                              Columna = col,
+                              Disponible = true
+                          }).ToList();
+
+            // 4) Inserta en la base y guarda
+            db.Asientos.AddRange(nuevos);
+            db.SaveChanges();
+
+            // 5) Mapea a DTO y devuelve
+            var dto = nuevos.Select(a => new AsientoDTO
+            {
+                Id = a.Id,
+                Fila = a.Fila,
+                Columna = a.Columna,
+                Disponible = a.Disponible
+            });
+            return Ok(dto);
+        }
+
+
+
+
+
+
+        [HttpPost]
+        [Route("api/funcionesdto")]
+        public IHttpActionResult PostFuncionDTO(FuncionDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var funcion = new Funcion
+            {
+                _peliculaId = dto._peliculaId,
+                _salaId = dto._salaId,
+                _fechaHora = dto._fechaHora,
+                _precioEntrada = dto._precioEntrada,
+                _asientosDisponibles = dto._asientosDisponibles
+            };
+
+            db.Funciones.Add(funcion);
+            db.SaveChanges();
+
+            return Ok(funcion);
+        }
+
+        [ResponseType(typeof(Funcion))]
+        public IHttpActionResult GetFuncionDTO(int id)
+        {
+            var funcion = db.Funciones.Find(id);
+            if (funcion == null) return NotFound();
+
+            var dto = new FuncionDTO
+            {
+                _peliculaId = funcion._peliculaId,
+                _salaId = funcion._salaId,
+                _fechaHora = funcion._fechaHora,
+                _precioEntrada = funcion._precioEntrada,
+                _asientosDisponibles = funcion._asientosDisponibles
+            };
+            return Ok(dto);
+        }
+
+
+        [HttpGet]
+        [Route("api/funciones/por-pelicula-detalle")]
+        public IHttpActionResult GetFuncionesPorPeliculaAgrupado(int idPelicula)
+        {
+            var funciones = db.Funciones
+                .Where(f => f._peliculaId == idPelicula)
+                .Include(f => f.Sala)
+                .Select(f => new {
+                    SalaId = f.Sala.Id,
+                    SalaNombre = f.Sala.Nombre,
+                    SalaTipo = f.Sala.Tipo,
+                    SalaUbicacion = f.Sala.Ubicacion,
+                    FuncionId = f.Id,
+                    FechaHora = f.FechaHora,
+                    PrecioEntrada = f.PrecioEntrada,
+                    AsientosDisponibles = f.AsientosDisponibles
+                }).ToList();
+
+            var agrupado = funciones
+                .GroupBy(f => new { f.SalaId, f.SalaNombre, f.SalaTipo, f.SalaUbicacion })
+                .Select(g => new {
+                    SalaId = g.Key.SalaId,
+                    Nombre = g.Key.SalaNombre,
+                    Tipo = g.Key.SalaTipo,
+                    Ubicacion = g.Key.SalaUbicacion,
+                    Funciones = g.Select(x => new {
+                        x.FuncionId,
+                        x.FechaHora,
+                        x.PrecioEntrada,
+                        x.AsientosDisponibles
+                    })
+                });
+
+            return Ok(agrupado);
+        }
+
+
+
+        
+        /*Metodo para compra los boletos*/
+        [HttpGet]
+        [Route("api/funciones/detalle")]
+        public IHttpActionResult GetDetalleFuncion(int id)
+        {
+            var funcion = db.Funciones
+                .Include(f => f.Sala)
+                .Include(f => f.Pelicula)
+                .FirstOrDefault(f => f.Id == id);
+
+            if (funcion == null)
+                return NotFound();
+
+            return Ok(new
+            {
+                PeliculaId = funcion._peliculaId,
+                Pelicula = funcion.Pelicula.Titulo,
+                Sala = funcion.Sala.Nombre,
+                FechaHora = funcion._fechaHora,
+                Clasificacion = funcion.Pelicula.Clasificacion,
+                IdExterna = funcion.Pelicula.IdExterna   
+            });
+        }
 
 
 

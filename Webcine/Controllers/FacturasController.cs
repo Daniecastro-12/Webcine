@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Webcine.DTOs;
 using WebCine.Models;
 
 namespace Webcine.Controllers
@@ -21,6 +22,67 @@ namespace Webcine.Controllers
         {
             return db.Facturas;
         }
+
+
+
+
+        [HttpPost]
+        [Route("api/facturas/registrar-compra")]
+        public IHttpActionResult RegistrarCompra([FromBody] FacturaRequestDTO request)
+        {
+            if (request == null || request.Cliente == null)
+                return BadRequest("Faltan los datos del cliente.");
+
+            var factura = new Factura
+            {
+                NombreCliente = request.Cliente.Nombre,
+                ApellidoCliente = request.Cliente.Apellido,
+                EmailCliente = request.Cliente.Email,
+                Fecha = DateTime.Now,
+                Total = request.Total,
+                Detalles = new List<DetalleFactura>()
+            };
+
+            foreach (var d in request.Detalles)
+            {
+                factura.Detalles.Add(new DetalleFactura
+                {
+                    Tipo = d.Tipo,
+                    Descripcion = d.Descripcion,
+                    Cantidad = d.Cantidad,
+                    PrecioUnitario = d.PrecioUnitario,
+                    Subtotal = d.Subtotal
+                });
+            }
+
+            db.Facturas.Add(factura);
+            db.SaveChanges();
+
+            // Generar QR y enviar correo como antes...
+            string resumenQR = $"Factura #{factura.Id}\nCliente: {factura.NombreCliente} {factura.ApellidoCliente}\nTotal: L {factura.Total}\nDetalles:\n" +
+                string.Join("\n", factura.Detalles.Select(x => $"{x.Tipo}: {x.Descripcion} x{x.Cantidad} (L {x.Subtotal})"));
+
+            byte[] qrBytes = QrHelper.GenerarQrComoPng(resumenQR);
+
+            string cuerpoMail = $"¡Gracias por tu compra!\n\n{resumenQR}\n\nAdjunto tu QR para presentar en taquilla.";
+            EmailHelper.EnviarCorreoConQR(factura.EmailCliente, "Tu compra en el cine", cuerpoMail, qrBytes);
+
+            return Ok(new { success = true, facturaId = factura.Id });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // GET: api/Facturas/5
         [ResponseType(typeof(Factura))]

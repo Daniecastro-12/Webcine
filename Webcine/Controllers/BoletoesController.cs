@@ -18,7 +18,7 @@ namespace Webcine.Controllers
         private MiDbContext db = new MiDbContext();
 
         // HAY QUE REVISARLO
-        [HttpGet]
+        /*[HttpGet]
         [Route("api/boletos/cliente-pelicula")]
         [SwaggerOperation("GetBoletosClientePelicula")]
         public IHttpActionResult GetBoletosClientePelicula()
@@ -52,11 +52,11 @@ namespace Webcine.Controllers
                          };
 
             return Ok(result);
-        }
+        }*/
 
 
 
-        [HttpGet]
+        /*[HttpGet]
         [Route("api/boletos/reservas")]
         [SwaggerOperation("GetBoletosPorEstadoReserva")]
         public IHttpActionResult GetBoletosPorEstadoReserva(bool estadoPago = true)
@@ -80,7 +80,7 @@ namespace Webcine.Controllers
                          };
 
             return Ok(result.ToList());
-        }
+        }*/
 
 
 

@@ -13,7 +13,7 @@ namespace WebCine.Models
         private string _apellido;
         private string _telefono;
         private string _email;
-        private DateTime _fechaNacimiento;
+        private DateTime? _fechaNacimiento;
         private string _domicilio;
         private string _genero;
         private string _nacionalidad;
@@ -52,7 +52,7 @@ namespace WebCine.Models
             set { _apellido = value; }
         }
 
-        public DateTime FechaNacimiento
+        public DateTime? FechaNacimiento
         {
             get { return _fechaNacimiento; }
             set { _fechaNacimiento = value; }
@@ -90,7 +90,7 @@ namespace WebCine.Models
 
         public override string ToString()
         {
-            return $"Nombre: {Nombre} {Apellido}, Nacionalidad: {Nacionalidad}, Fecha Nacimiento: {FechaNacimiento.ToShortDateString()}";
+            return $"Nombre: {Nombre} {Apellido}, Nacionalidad: {Nacionalidad}, Fecha Nacimiento: {FechaNacimiento}";
         }
     }
 }

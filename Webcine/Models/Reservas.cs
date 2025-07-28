@@ -3,74 +3,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Webcine.Models;
 
 namespace WebCine.Models    
 {
     public class Reserva
     {
-        private int _id;
+        public int Id { get; set; }
 
-        public int _clienteId { get; set; }
-        public Cliente _cliente;
+        public int ClienteId { get; set; }
+        public Cliente Cliente { get; set; }
 
-        public int _funcionId { get; set; }
-        public Funcion _funcion;
+        public int FuncionId { get; set; }
+        public Funcion Funcion { get; set; }
 
+        public DateTime FechaReserva { get; set; } = DateTime.Now;
 
+        public bool EstadoPago { get; set; }
 
+        public virtual ICollection<ReservaDetalle> Detalles { get; set; } // Detalle por tipo de entrada
 
-        public int _cantidadBoletos;
-        public List<Asiento> _listaAsientos = new List<Asiento>();
-        public bool _estadoPago;
+        public virtual ICollection<Asiento> Asientos { get; set; } // Asientos reservados opcionalmente
 
 
         public Reserva()
         {
         }
-        public Reserva(int id, Cliente cliente, Funcion funcion, int cantidadBoletos, List<Asiento> listaAsientos, bool estadoPago)
+
+        public Reserva(int id, int clienteId, Cliente cliente, int funcionId, Funcion funcion, DateTime fechaReserva, bool estadoPago, ICollection<ReservaDetalle> detalles, ICollection<Asiento> asientos)
         {
             Id = id;
+            ClienteId = clienteId;
             Cliente = cliente;
+            FuncionId = funcionId;
             Funcion = funcion;
-            CantidadBoletos = cantidadBoletos;
-            ListaAsientos = listaAsientos;
+            FechaReserva = fechaReserva;
             EstadoPago = estadoPago;
-        }
-
-        public int Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-        public Cliente Cliente
-        {
-            get { return _cliente; }
-            set { _cliente = value; }
-        }
-        public Funcion Funcion
-        {
-            get { return _funcion; }
-            set { _funcion = value; }
-        }
-        public int CantidadBoletos
-        {
-            get { return _cantidadBoletos; }
-            set { _cantidadBoletos = value; }
-        }
-        public List<Asiento> ListaAsientos
-        {
-            get { return _listaAsientos; }
-            set { _listaAsientos = value; }
-        }
-        public bool EstadoPago
-        {
-            get { return _estadoPago; }
-            set { _estadoPago = value; }
-        }
-
-        public override string ToString()
-        {
-            return $"Reserva ID: {Id}, Cliente: {_cliente.Nombre}, Boletos: {_cantidadBoletos}";
+            Detalles = detalles;
+            Asientos = asientos;
         }
     }
 }

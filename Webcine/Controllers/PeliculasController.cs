@@ -1,4 +1,5 @@
-﻿using Swashbuckle.Swagger.Annotations;
+﻿using Newtonsoft.Json;
+using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,8 +8,10 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Webcine.DTOs;
 using WebCine.Models;
 
 namespace Webcine.Controllers
@@ -59,6 +62,70 @@ namespace Webcine.Controllers
 
             return Ok(peliculas);
         }
+
+
+
+        [HttpPost]
+        [Route("api/peliculas/importar-tmdb-multiple")]
+        public async Task<IHttpActionResult> ImportarVariasPeliculas([FromBody] List<int> idsTMDB)
+        {
+            var apiKey = "05c9528255ffa6fb3a9efa3353af15da";
+            var http = new HttpClient();
+            var importadas = new List<string>();
+            var errores = new List<string>();
+
+            foreach (var idTMDB in idsTMDB)
+            {
+                try
+                {
+                    var url = $"https://api.themoviedb.org/3/movie/{idTMDB}?api_key={apiKey}&language=es-ES";
+                    var resp = await http.GetStringAsync(url);
+                    var peli = JsonConvert.DeserializeObject<TMDBPelicula>(resp);
+
+                    if (db.Peliculas.Any(p => p.Id == peli.id))
+                    {
+                        errores.Add($"La película {peli.title} ya existe.");
+                        continue;
+                    }
+
+                    string genero = peli.genres != null && peli.genres.Count > 0
+                        ? string.Join(", ", peli.genres.Select(g => g.name))
+                        : "";
+
+                    var nueva = new Pelicula
+                    {
+                        Id = peli.id,
+                        Titulo = peli.title,
+                        Genero = genero,
+                        Duracion = peli.runtime,
+                        Clasificacion = peli.adult ? "Solo adultos" : "Apto para todo público",
+                        Sinopsis = peli.overview,
+                        Idioma = peli.original_language,
+                        FechaEstreno = DateTime.TryParse(peli.release_date, out var dt) ? dt : DateTime.Now,
+                        Funciones = new List<Funcion>()
+                    };
+
+                    db.Peliculas.Add(nueva);
+                    db.SaveChanges();
+                    importadas.Add(nueva._titulo);
+                }
+                catch (Exception ex)
+                {
+                    errores.Add($"Error con id {idTMDB}: {ex.Message}");
+                }
+            }
+
+            return Ok(new
+            {
+                Exito = importadas,
+                Fallidas = errores
+            });
+        }
+
+
+
+
+
 
 
         //PELICULAS CON FUNCIONES PROXIMAS

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,17 +11,23 @@ namespace WebCine.Models
     {
         public int _id;
         public int _peliculaId { get; set; }
+        [JsonIgnore]
         public Pelicula _pelicula;
 
         public int _salaId { get; set; }
+        [JsonIgnore]
         public Sala _sala;
 
+        [JsonIgnore]
         public List<Boleto> Boletos { get; set; }
 
         public DateTime _fechaHora;
         public decimal _precioEntrada;
         public int _asientosDisponibles;
+        [JsonIgnore]
+        public virtual ICollection<Asiento> Asientos { get; set; }
 
+        
 
         public Funcion()
         {
@@ -33,6 +40,8 @@ namespace WebCine.Models
             FechaHora = fechaHora;
             PrecioEntrada = precioEntrada;
             AsientosDisponibles = asientosDisponibles;
+            Boletos = new List<Boleto>();
+            Asientos = new List<Asiento>();
         }
 
         public int Id

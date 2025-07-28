@@ -8,73 +8,29 @@ namespace WebCine.Models
 {
     public class Factura
     {
-        public int _id;
-
-        public int _clienteId { get; set; }
-        public Cliente _cliente;
-
-
-        public DateTime _fecha;
-
-
-
-        public List<DetalleFactura> _listaDetalles = new List<DetalleFactura>();
-
-
-        public decimal _total;
-
-        public int _metodoPagoId { get; set; }
-        public MetodoPago _metodoPago;
+        public int Id { get; set; }
+        public string NombreCliente { get; set; }
+        public string ApellidoCliente { get; set; }
+        public string EmailCliente { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.Now;
+        public decimal Total { get; set; }
+        
+        public virtual ICollection<DetalleFactura > Detalles { get; set; }
 
 
         public Factura()
         {
         }
-        public Factura(int id, Cliente cliente, DateTime fecha, List<DetalleFactura> listaDetalles, decimal total, MetodoPago metodoPago)
+
+        public Factura(int id, string nombreCliente, string apellidoCliente, string emailCliente, DateTime fecha, decimal total, ICollection<DetalleFactura> detalles)
         {
             Id = id;
-            Cliente = cliente;
+            NombreCliente = nombreCliente;
+            ApellidoCliente = apellidoCliente;
+            EmailCliente = emailCliente;
             Fecha = fecha;
-            ListaDetalles = listaDetalles;
             Total = total;
-            MetodoPago = metodoPago;
-        }
-
-        public int Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-
-        public decimal Total
-        {
-            get { return _total; }
-            set { _total = value; }
-        }
-        public Cliente Cliente
-        {
-            get { return _cliente; }
-            set { _cliente = value; }
-        }
-        public DateTime Fecha
-        {
-            get { return _fecha; }
-            set { _fecha = value; }
-        }
-        public List<DetalleFactura> ListaDetalles
-        {
-            get { return _listaDetalles; }
-            set { _listaDetalles = value; }
-        }
-        public MetodoPago MetodoPago
-        {
-            get { return _metodoPago; }
-            set { _metodoPago = value; }
-        }
-
-        public override string ToString()
-        {
-            return $"Factura ID: {Id}, Cliente: {_cliente.Nombre}, Total: {Total:C}";
+            Detalles = detalles;
         }
     }
 }

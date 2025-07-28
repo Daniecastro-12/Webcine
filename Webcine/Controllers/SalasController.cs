@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Webcine.DTOs;
 using WebCine.Models;
 
 namespace Webcine.Controllers
@@ -21,6 +22,30 @@ namespace Webcine.Controllers
         {
             return db.Salas;
         }
+
+
+        [HttpPost]
+        [Route("api/salasdto")]
+        public IHttpActionResult PostSalaDTO(SalaDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var sala = new Sala
+            {
+                Nombre = dto.Nombre,
+                Capacidad = dto.Capacidad,
+                Tipo = dto.Tipo,
+                Ubicacion = dto.Ubicacion
+            };
+
+            db.Salas.Add(sala);
+            db.SaveChanges();
+
+            return Ok(sala);
+        }
+
+
 
         // GET: api/Salas/5
         [ResponseType(typeof(Sala))]
