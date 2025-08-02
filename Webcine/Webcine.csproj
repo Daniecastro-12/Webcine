@@ -222,6 +222,7 @@
     <Compile Include="DTOs\EmailHelper.cs" />
     <Compile Include="DTOs\FacturaRequestDTO.cs" />
     <Compile Include="DTOs\FuncionDTO.cs" />
+    <Compile Include="DTOs\FuncionTipoEntradaDTO.cs" />
     <Compile Include="DTOs\QrHelper.cs" />
     <Compile Include="DTOs\ReservaDTO.cs" />
     <Compile Include="DTOs\ReservaRequestModel.cs" />

@@ -169,7 +169,7 @@ namespace Webcine.Controllers
 
 
 
-
+        /*
         [HttpPost]
         [Route("api/funciones/ocupar-asientos")]
         public IHttpActionResult OcuparAsientos([FromBody] OcuparAsientosRequest req)
@@ -208,13 +208,13 @@ namespace Webcine.Controllers
         public class OcuparAsientosRequest
         {
             public List<int> IdsAsientos { get; set; }
-        }
+        }*/
 
 
 
 
 
-
+        /*
         [HttpGet]
         [Route("api/funciones/{id}/asientos")]
         public IHttpActionResult GetAsientosPorFuncion(int id)
@@ -234,9 +234,71 @@ namespace Webcine.Controllers
                 })
                 .ToList();
             return Ok(lista);
+        }*/
+
+
+        [HttpGet]
+        [Route("api/funciones/{id}/asientos")]
+        public IHttpActionResult GetAsientosPorFuncion(int id)
+        {
+            // Solo regresa los ocupados (los que existen para esa función)
+            var lista = db.Asientos
+                .Where(a => a.FuncionId == id)
+                .Select(a => new AsientoDTO
+                {
+                    Id = a.Id,
+                    Fila = a.Fila,
+                    Columna = a.Columna,
+                    
+                })
+                .ToList();
+            return Ok(lista);
+        }
+
+        [HttpPost]
+        [Route("api/funciones/{idFuncion}/asientos")]
+        public IHttpActionResult ReservarAsientos(int idFuncion, [FromBody] List<AsientoDTO> selectedSeats)
+        {
+            // 1. Busca la función asociada
+            var funcion = db.Funciones.FirstOrDefault(f => f.Id == idFuncion);
+            if (funcion == null)
+                return NotFound();
+
+            var salaId = funcion._salaId;
+
+            // 2. Inserta solo los asientos que no existen, asignando SalaId
+            foreach (var asiento in selectedSeats)
+            {
+                var existe = db.Asientos.Any(a =>
+                    a.FuncionId == idFuncion &&
+                    a.Fila == asiento.Fila &&
+                    a.Columna == asiento.Columna);
+
+                if (!existe)
+                {
+                    db.Asientos.Add(new Asiento
+                    {
+                        FuncionId = idFuncion,
+                        SalaId = salaId,            // ← Asigna el SalaId correcto aquí
+                        Fila = asiento.Fila,
+                        Columna = asiento.Columna,
+                        Disponible = false // Siempre reservado
+                    });
+                }
+            }
+
+            db.SaveChanges();
+            return Ok();
         }
 
 
+
+
+
+
+
+
+        /*
         // POST api/funciones/{id}/asientos/generar
         [HttpPost]
         [Route("{id}/asientos/generar")]
@@ -281,6 +343,7 @@ namespace Webcine.Controllers
             });
             return Ok(dto);
         }
+        */
 
 
 

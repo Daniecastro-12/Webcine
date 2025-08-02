@@ -8,8 +8,9 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
-using WebCine.Models;
+using Webcine.DTOs;
 using Webcine.Models;
+using WebCine.Models;
 
 namespace Webcine.Controllers
 {
@@ -41,6 +42,27 @@ namespace Webcine.Controllers
             return Ok(tipos);
         }
 
+
+        [HttpPost]
+        [Route("api/funcion-tipo-entradas")]
+        public IHttpActionResult PostFuncionTipoEntradas(FuncionTipoEntradaDTO dto)
+        {
+            if (dto == null)
+                return BadRequest("Datos inválidos.");
+
+            // Mapear DTO al modelo real si es necesario
+            var funcionTipoEntrada = new FuncionTipoEntrada
+            {
+                FuncionId = dto.FuncionId,
+                TipoEntradaId = dto.TipoEntradaId,
+                Disponibles = dto.Disponibles
+            };
+
+            db.FuncionTipoEntradas.Add(funcionTipoEntrada);
+            db.SaveChanges();
+
+            return Ok();
+        }
 
 
 
